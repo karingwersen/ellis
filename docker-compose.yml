@@ -1,0 +1,30 @@
+version: '3.8'
+
+# É uma boa prática definir redes customizadas para seus serviços.
+# Isso melhora o isolamento e permite que os contêineres se comuniquem
+# uns com os outros usando seus nomes de serviço (ex: 'api' pode falar com 'db').
+networks:
+  escola-network:
+    driver: bridge
+
+services:
+  api:
+    # Constrói a imagem a partir do Dockerfile no diretório atual (.).
+    build: .
+    # Define um nome fixo e legível para o contêiner.
+    # Facilita a execução de comandos como 'docker logs imersao-devops-api'.
+    container_name: imersao-devops-api
+    # Política de reinicialização. 'unless-stopped' reinicia o contêiner
+    # a menos que ele tenha sido parado manualmente.
+    restart: unless-stopped
+    # O comando de inicialização será o CMD definido no Dockerfile.
+    # A flag --reload e o volume foram removidos para criar um
+    # ambiente mais isolado, onde os dados (incluindo o banco de dados)
+    # não são persistidos no seu computador.
+    # Mapeia a porta 8000 do seu computador (host) para a porta 8000 do contêiner.
+    # Formato: "HOST:CONTAINER"
+    ports:
+      - "8000:8000"
+    # Conecta o serviço à rede que definimos acima.
+    networks:
+      - escola-network
